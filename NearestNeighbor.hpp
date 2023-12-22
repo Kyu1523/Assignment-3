@@ -58,27 +58,29 @@ void nearestNeighbor(std::string filename){
     }
 
     std::queue<Node> result;
-    Node first = cities.front();
+    Node first = cities.front();    //copy of first node to go back to at the end
     Node temp = cities.front(); 
     double total_dist = 0;   
     auto start = high_resolution_clock::now();
+   
     while(!cities.empty()){
         result.push(temp);
         cities.remove(temp);
         double length = 99999999999999999;
-        for(auto const& i : cities){
-            if(length > temp.distance(i)){
-                length = temp.distance(i);
-                temp = i;
-            }
+        if(cities.empty()){
+            break;
         }
-        if(length >= 99999999999999999){
-            length = 0;
+        for(auto const& i : cities){
+            if(length > temp.distance(i)){      //if distance is less than current distance
+                length = temp.distance(i);          //current distance is new distance
+                temp = i;                           //new node is previous closest node
+            }
         }
         total_dist += length;
     }
     result.push(first);
     total_dist += temp.distance(first);
+    
     auto stop = high_resolution_clock::now();
     auto l = duration_cast<milliseconds>(stop-start);
     double len = l.count();
