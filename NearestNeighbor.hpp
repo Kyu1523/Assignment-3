@@ -22,6 +22,15 @@ class Node{
 };
 
 /**
+ * @brief Default Constructor
+ */
+Node::Node(){
+    int id = 0;
+    double x_coordinate = 0;
+    double y_coordinate = 0;
+}
+
+/**
  * @brief Parameterized Constructor for node
  * 
  * @param x_cooord : x coordinate of node
@@ -30,6 +39,7 @@ class Node{
  */
 Node::Node(const std::string &x_coord,const std::string &y_coord,const std::string &i):x_coordinate{std::stod(x_coord)},y_coordinate{std::stod(y_coord)},id{std::stoi(i)}{
 }
+
 /**
  * @param: A node calculate the distance to
  * @return a double that has the distance between the 2 nodes
@@ -42,7 +52,6 @@ double Node::distance(Node a) const{
 
 /**
  * @brief NearestNeighbor implementation
- * 
  * @param A string of the filename that stores the coordinates of the cities
  */
 void nearestNeighbor(std::string filename){
@@ -68,19 +77,21 @@ void nearestNeighbor(std::string filename){
         cities.remove(temp);
         double length = 99999999999999999;
         if(cities.empty()){
+            result.push(first);
+            total_dist += temp.distance(first);
             break;
         }
-        for(auto const& i : cities){
-            if(length > temp.distance(i)){      //if distance is less than current distance
-                length = temp.distance(i);          //current distance is new distance
-                temp = i;                           //new node is previous closest node
+        
+        Node tmp;
+        for(auto const& i : cities){            //loops through all the unvisited cities
+            if(length >= temp.distance(i)){      //if distance is less than current distance
+                tmp = i;                            //closet node will be stored in tmp
+                length = temp.distance(i);          //current distance is new distance                           
             }
         }
+        temp = tmp;
         total_dist += length;
     }
-    result.push(first);
-    total_dist += temp.distance(first);
-    
     auto stop = high_resolution_clock::now();
     auto l = duration_cast<milliseconds>(stop-start);
     double len = l.count();
