@@ -8,14 +8,12 @@
 #include <chrono>
 using namespace std::chrono;
 
-class Node{
-    public:
+struct Node{
     double distance(Node a) const;
     Node();
     Node(const std::string &x_coord,const std::string &y_coord,const std::string &i);
     bool operator==(const Node& a){return id == a.id;}
 
-    std::list<Node*> neighbors;
     double x_coordinate;
     double y_coordinate;
     int id;
@@ -68,33 +66,33 @@ void nearestNeighbor(std::string filename){
 
     std::queue<Node> result;
     Node first = cities.front();    //copy of first node to go back to at the end
-    Node temp = cities.front(); 
+    Node node = cities.front(); 
     double total_dist = 0;   
     auto start = high_resolution_clock::now();
    
     while(!cities.empty()){
-        result.push(temp);
-        cities.remove(temp);
+        result.push(node);
+        cities.remove(node);
         double length = 99999999999999999;
         if(cities.empty()){
             result.push(first);
-            total_dist += temp.distance(first);
+            total_dist += node.distance(first);
             break;
         }
-        
-        Node tmp;
+        Node tmp;                           //stores the nearest node
         for(auto const& i : cities){            //loops through all the unvisited cities
-            if(length >= temp.distance(i)){      //if distance is less than current distance
-                tmp = i;                            //closet node will be stored in tmp
-                length = temp.distance(i);          //current distance is new distance                           
+            if(length >= node.distance(i)){      //if distance is less than current distance
+                tmp = i;                            
+                length = node.distance(i);                                    
             }
         }
-        temp = tmp;
+        node = tmp;
         total_dist += length;
     }
     auto stop = high_resolution_clock::now();
     auto l = duration_cast<milliseconds>(stop-start);
     double len = l.count();
+
     while(!result.empty()){
         std::cout << result.front().id << " ";
         result.pop();
